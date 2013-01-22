@@ -1,0 +1,232 @@
+// two nums a, b
+// store in 14 & 15
+// if a <= b { print(non_zero) }
+// else print(0)  
+
+code
+
+14 => r0
+15 => r1
+r0 == 0?r1check_from0:r1check_from_not0
+(r1check_from0)r1 == 0?print(non_zero):print(non_zero)
+(r1check_from_not0)r1 == 0?print(0):next
+r0 -= 1
+r1 -= 1
+goto(2)
+r0 += 1
+print
+swap
+print
+
+load into r0
+ addr 14
+load into r1
+ addr 15
+dec(r0)
+dec(r1)
+r0 == 0?
+ goto(dec(r0))
+r1 == 0?
+ goto(dec(both))
+load r0     // if { r0 != 0, load 1, then dec, the print(0) }
+ value 1
+dec(r0)     // if { r0 == 0, dec, then print(non-0)
+print
+
+//this works, but too many bytes
+swap r0
+ addr 15
+swap r0
+ addr 14
+dec(r0)
+r0 == 0?
+ goto(dec(r0))
+swap r0
+ addr 14
+dec(r0)
+r0 == 0?
+goto(2)
+load r0     // if { r0 != 0, load 1, then dec, the print(0) }
+ value 1
+dec(r0)     // if { r0 == 0, dec, then print(non-0)
+print
+
+
+swap r0
+ addr 14
+swap r0
+ addr 15
+dec(r0)
+r0 == 0?
+ goto(print)
+swap r0
+ addr 15
+dec(r0)
+r0 == 0?
+goto(2)
+dec(r0)     //14 if { r0 == 0, dec, then print(non-0)
+print       //15 if { r0 == 0, print }
+
+14 = 0
+15 = 2
+r0 = 2
+sw = 
+
+
+//this is so close
+// prints 0 if less
+// print 255 if more
+// prints 0 if == (should print 255)
+// print 0 if 0,0 (should print 255) 
+// fails 20 == 20
+14 14 14 15 2 9 13 14 15 2 8 2 2 7 0 
+
+// gained one cell, but not much better
+// this fails first test
+14 14 14 15 2 9 11 14 15 2 8 2 7 0
+
+//This is even closer
+14 15 14 14 2 9 11 14 14 2 8 2 7 0
+14 15 14 14 2 9 11 14 14 2 8 2 7 0 42 69 //255
+14 15 14 14 2 9 11 14 14 2 8 2 7 0 20 20 //255
+14 15 14 14 2 9 11 14 14 2 8 2 7 0 100 20 //0
+14 15 14 14 2 9 11 14 14 2 8 2 7 0 0 255 //0 - should be non-zero
+
+// try this out
+//infinite loop
+14 15 2 14 14 9 11 14 14 2 8 2 7 0
+
+//next?
+// passes all but 20 == 20 //puts out 0, should be non-zero
+14 15 2 14 14 9 11 2 14 14 8 2 7 0
+
+// final code that works!!!
+14 14 9 12 2 14 15 9 13 2 8 2 2 7
+
+
+Machine Code Tips (no spoilers) 
+
+For anyone who's found it pretty frustated to write machine code I decided to write up a few tips. After working on some of the challenges, these are some things I've fingured out that I wish someoe would've shared with me to begin with. 
+
+Treat these tips like a wiki - if you can re-write it to make it more clear, or add an example plese do so! 
+
+If you've learned something or have a good (non-spoiler) tip, then please create a subpage and link it here. I promise to give you some karma! 
+
+Here are some tips: 
+
+== Code on paper - not the emulator! ==
+
+Richard mentions doing this as an option, but really I think it's THE secret to programming the smaller chips. 16 bytes is just too claustrophobic to program in. By writing the code on paper you can focus on how to solve the problem with out having to worry about the memory constraint. In effect, you can write as many bytes as you want to solve the problem. Once you have a program that solves the problem THEN you can look at ways to optimize it/make it shorter. 
+
+The other advantage of writing it on paper (or typing in a text editor) is that you can write in understandable pseduo-code instead of coding with numbers. 
+
+Here's an example:
+
+load into r0
+    the value 5
+load into r1
+    the value 7
+subtract r0 = r0 - r1
+decrement r0
+print
+if r0 == 0
+    go to subtract
+
+In 4004 machine code this would be:
+10 5 11 7 6 2 7 8 6 
+
+Having it typed out in pseduo code is way easier to understand what's happening than looking at a bunch of numbers. 
+
+Also if you want to move a value around it's easy to do. Let's say I notice my code would be better if I move the subtract statment, I can just move it:
+
+load into r0
+    the value 5
+load into r1
+    the value 7
+decrement r0
+subtract r0 = r0 - r1
+print
+if r0 == 0
+    go to subtract
+
+Trying to move code around in the emulator is difficult, but on paper/in an editor it's easy. 
+
+Tips to Optimize (No Spoilers) 
+
+When you have some machine code typed out, but it uses too much memory, here are some tips to make it smaller:
+
+== Get rid of duplicates == 
+
+Look at your code, are there places where you use the same command more than once? Can you combine those into one statment? For example say you print, then decrement, swap values  then print again - can you loop back to the print so you only use one print statment? 
+
+Here's a non-spoiler example:
+
+swap r0
+    with addr 15
+decrement r0
+print
+swap r0 with addr 15
+decrement r0
+print
+
+Instead we can save a byte by doing this:
+
+swap r0
+    with addr 15
+decrement r0
+print
+if r0 != 0
+    goto swap r0 
+
+This is a pretty simplistic example, and the two code examples don't stricly do the same thing, but it serves to illustrate the point - 
+
+"try to combine duplicate instructions." 
+
+== Use the 2nd half of 2-byte instruction ==
+
+This one's tricky, but sometimes it's just the trick you need. The idea is that several of the instruction take 2 bytes. For example 8 says "if r0 != 0 then go some where" and the second byte says "where do I go?"
+
+e.g. 8 2 says "if r0 does not equal zero then goto address 2" However, "2" is also the instruction for "decrement r0 by 1" - so you can use that! 
+
+//in 4004 machine code
+1 1 7 2 9 7 8 2
+
+//in pseudo code
+increment r0
+increment r0
+print
+decrement r0
+if r0 == 0
+    goto 7 // here is the magic!
+if r0 != 0
+    goto 2 // this is address 7
+
+When you use a "goto" you can go to the second half of a 2-byte instruction. Make that byte work twice as hard! (as an address and as an instruction) 
+
+Note that once you get to this level of optimization it becomes helpful to actually code with the numbers instead of pesduo code. You'll start looking at your machine code in number format and think "oh if I move this here then I can re-use the second half of this instruction!"
+
+Pro-tip: Using "0" is particularly effetive. (It loops to the start of the program, but you can also go straight to the 0 to end the program.) 
+
+Play, Play, Play
+
+Richard talked about this in the lecture, but it's worth re-iterating. The value of simply trying things out cannot be under-estimated. We have a really nice emulator in this class for machine code - use it! Especially the ability to "step" through the program one step at a time. This will really help you understand what's going on. 
+
+== Use a countdown == 
+
+This can be really helpful. Say you want to execute a piece of code 7 times - how do you do that? You can't write the same set of instructions 7 times, there's not enough room. One way to do it is to use a countdown. 
+
+For example store the number 7 in slot 15, this will be the count down slot. Then run some code. Then move 15 to r0, decrement, then move it back, then loop over the code again. Here's a non-spoiler example: 
+
+10 7 14 15 1 1 14 15 2 8 2 14 15 7 0
+
+This code has a loop that increments r0 twice - it goes through the loop 7 times so the final result prints out 14. Run the code step by step to see how the cound down works. 
+
+
+
+
+
+
+
+
+
+

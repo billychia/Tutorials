@@ -1,0 +1,194 @@
+// DDUTgen.c by Billy Chia
+// Dec 24, 2012
+// A script to generate all unit tests for a doomsday function
+// part of UNSW Computing 1 on openlearning.com
+// 7 posible doomsdays (Monday - Sunday) 
+// leapYear && non-leapYear 
+// 365 or 366 days in year
+// 7 * 2 * 365 + 7 = 5117 asserts
+// Thanks to David Klick for the idea
+// On a Unix-based system run "./DDUTgen > doomsdayUntiTests.h" 
+// Freely licensed under Creative Commons CC-BY-3.0
+
+#include <stdio.h>
+#include <stdlib.h>
+#include <assert.h>
+
+#define THURSDAY  0
+#define FRIDAY    1
+#define SATURDAY  2
+#define SUNDAY    3
+#define MONDAY    4
+#define TUESDAY   5
+#define WEDNESDAY 6
+
+#define TRUE 1
+#define FALSE 0
+#define DAYS_PER_WEEK 7
+#define MONTHS_PER_YEAR 12
+
+void test(void);
+void printAsserts (void);
+void printAssert (int leapYear, int month, int day,
+                  int dayOfWeek, int doomsday);
+int getNextLeap(int leapYear, int month, int day, int doomsday);
+int getNextDay(int leapYear, int month, int day);
+int daysInMonth(int leapYear, int month);
+int getNextMonth(int month, int day);
+int getNextDayOfWeek(int leapYear, int month, int day,
+                     int dayOfWeek, int doomsday);
+int getNextDooms(int leapYear, int month, int day, int doomsday);
+
+typedef char * string;
+
+int main (int argc, char *argv[]) {
+
+    printAsserts();
+    //test();
+
+    return EXIT_SUCCESS;
+}
+
+void test(void) {
+
+    int doomsday = 0;
+    int leapYear = 0;
+    int month = 12;
+    int day = 31;
+    int dayOfWeek = 5;
+
+    printAssert(leapYear, month, day, dayOfWeek, doomsday);
+
+    leapYear = getNextLeap(leapYear, month, day, doomsday);
+    day = getNextDay(leapYear, month, day);
+    month =getNextMonth(month, day);
+    doomsday = getNextDooms(leapYear, month, day, doomsday);
+    dayOfWeek = getNextDayOfWeek(leapYear, month, day,
+                                 dayOfWeek, doomsday);
+
+    printAssert(leapYear, month, day, dayOfWeek, doomsday);
+    return;
+}
+
+void printAsserts(void) {
+    int doomsday = 0;
+    int leapYear = 0;
+    int month = 1;
+    int day = 1;
+    int dayOfWeek = 5; //Jan 1 with 0 DD && 0 leap
+
+    while (leapYear <= 1) {
+        printAssert(leapYear, month, day, dayOfWeek, doomsday);
+
+        leapYear = getNextLeap(leapYear, month, day, doomsday);
+        day = getNextDay(leapYear, month, day);
+        month =getNextMonth(month, day);
+        doomsday = getNextDooms(leapYear, month, day, doomsday);
+        dayOfWeek = getNextDayOfWeek(leapYear, month, day,
+                                     dayOfWeek, doomsday);
+    }
+
+    return;
+}
+
+int getNextLeap(int leapYear, int month, int day, int doomsday) {
+    if (month == 12 && day == 31 && doomsday == 6) {
+        leapYear++ ;
+    }
+
+    return leapYear;
+}
+
+int getNextDay(int leapYear, int month, int day) {
+    if (day < daysInMonth(leapYear, month)) {
+        day++ ;
+    } else {
+        day = 1;
+    }
+
+    return day;
+}
+
+int daysInMonth(int leapYear, int month) {
+    int daysInMonth;
+
+    if (month == 2) {
+        if (leapYear) {
+            daysInMonth = 29;
+        } else {
+            daysInMonth = 28;
+        }
+    } else if (month < 8) {
+        if ((month % 2) == 0) {
+            daysInMonth = 30;
+        } else {
+            daysInMonth = 31;
+        }
+    } else {
+        if ((month % 2) == 0) {
+            daysInMonth = 31;
+        } else {
+            daysInMonth = 30;
+        }
+    }
+
+    return daysInMonth;
+}
+
+int getNextMonth(int month, int day) {
+    if (day == 1) { 
+        if (month < MONTHS_PER_YEAR) {
+            month++ ;
+        } else {
+            month = 1;
+        }
+    }
+
+    return month;
+}
+
+int getNextDooms(int leapYear, int month, int day, int doomsday) {
+    if (month == 1 && day == 1) {
+        if (leapYear) {
+            doomsday = (doomsday + 2) % DAYS_PER_WEEK;
+        } else {
+            doomsday = (doomsday + 1) % DAYS_PER_WEEK;
+        }
+    }
+
+    return doomsday;
+}
+
+int getNextDayOfWeek(int leapYear, int month, int day, 
+                     int dayOfWeek, int doomsday) {
+    if (month == 1 && day == 1) {
+        if (leapYear) {
+            dayOfWeek = (doomsday - 3 + DAYS_PER_WEEK) % DAYS_PER_WEEK; 
+        } else {
+            dayOfWeek = (doomsday - 2 + DAYS_PER_WEEK) % DAYS_PER_WEEK; 
+        }
+    } else {
+        dayOfWeek = (dayOfWeek + 1) % DAYS_PER_WEEK;
+    }
+
+    return dayOfWeek;
+}
+
+void printAssert(int leapYear, int month, int day,
+                 int dayOfWeek, int doomsday) {
+    string days[7] = { "THURSDAY", 
+                       "FRIDAY", 
+                       "SATURDAY",
+                       "SUNDAY", 
+                       "MONDAY", 
+                       "TUESDAY", 
+                       "WEDNESDAY" };
+
+    string boolean[2] = { "FALSE", "TRUE" };
+
+    printf("assert (dayOfWeek (%s,  %s,  %d,  %d) == %s);\n",
+                    days[doomsday], boolean[leapYear], month,
+                    day, days[dayOfWeek]);
+
+    return;
+}

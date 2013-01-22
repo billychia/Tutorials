@@ -1,0 +1,120 @@
+Student Notes - Lecture 25: More String
+
+https://www.openlearning.com/courses/unsw/computing1/Cohorts/Dec32012/lectureNotes/25
+
+String.h
+
+#inclue <string.h>
+
+C library that provides functions to deal with strings.
+
+{{{
+#!code
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+int main (int argc, char *argv[]) {
+
+   char *message = "tree";
+
+   printf ("length of %s is %d, first letter is %c ie %c\n",
+            message, strlen (message), *message, message[0]);
+   // prints "length of tree is 4, first letter is t ie t"
+   // message == the string "tree"
+   // strlen(message) is a function provided by string.h
+   // *message is a pointer to the first letter
+   // message[0] gets the letter at teh 0th index
+
+   return EXIT_SUCCESS;
+}
+}}}
+
+If we didn't have strlen() - how would we write it ourselves? 
+
+{{{
+050 | 'G' | 'w' | 'e' | 'n' | 0 | 
+}}}
+
+{{{
+#!code
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <assert.h>
+ 
+int stringLength (char *message);
+void testStringLength (void);
+ 
+int main (int argc, char *argv[]) {
+   testStringLength ();
+ 
+   printf ("argc is %d\n", argc);
+   // prints "1"
+ 
+   char *message = "tree";
+ 
+   printf ("length of %s is %d, first letter is %c ie %c\n", message, strlen (message), *message, message[0]);
+ 
+   int ourLength = stringLength (message);
+ 
+   return EXIT_SUCCESS;
+}
+ 
+/*
+int stringLength (char *start){
+   int length = 0;
+ 
+   char *pointer;
+ 
+   pointer = start;
+ 
+   while (*pointer != 0) {
+      length++;
+      pointer++;
+   }
+   return length;
+}
+*/
+ 
+int stringLength (char *start){
+   int length = 0;
+ 
+   while (start[length] != 0) {
+      length++;
+   }
+   return length;
+}
+ 
+void testStringLength (void) {
+   printf ("Now testing string length\n");
+   assert (stringLength("Gwen") == 4);
+   assert (stringLength("Seven") == 5);
+   assert (stringLength("Passed!") == 7);
+   assert (stringLength(" 42 ") == 4);
+   assert (stringLength("") == 0);
+   printf ("All tests passed\n");
+   printf ("You are Awesome!\n");
+}
+
+}}}
+
+What about saftey? 
+
+It is unsafe to use a marker character. There is oppertunity for attack by storing a string that contains the marker character (for example a string that containts a 0, not the ASCII for the character 0, which is 48, but the ascii for the marker character null). Modern systems store the length along with the string:
+
+{{{
+050 | 0 | 0 | 0 | 4 | 'G' | 'w' | 'e' | 'n' |
+}}}
+
+This takes 4 bytes intead of 1. Historically, whne you only had 12k of memory 3 bytes was expensive which is why C implements the "0 at the end" method. Modern systems store the length with the string as this is more secure. The control data is separate from the user data.
+
+Multiplexing (mixing) the control and user data can open a vector for attack. 
+
+For example AT&T used to mix the control data (singles that determine if you had access to long distance calling or not) in together with the user data (the voice audio stream). The tone 2600 hz allowed long distance calling. 2600hz was the same tone produced by the Cap'n Crunch whistle - so blowing the whistle into the phone gave you free calls. 
+
+see http://en.wikipedia.org/wiki/Phreaking
+
+
+
+

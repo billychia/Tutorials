@@ -1,0 +1,226 @@
+Write 3 functions:
+
+half() - given an even number this function returns that number halved, eg given 10 it would return 5
+.
+nextTerm() - given a number this function returns the next number in the Wondrous sequence following on from that number.   Eg given 3 it returns 10  (as 3x3+1 = 10)
+
+isEven() - given a number this function returns zero if the number is odd, and a none zero value if the number is even.  Eg given 9 it would return 0.
+function instructions   start at    frame starts at
+main()                  0           -
+half()                  60          240
+nextTerm()              120         245
+isEven()                180         250
+
+Frame:
+ret_addr, arg1, old_r1
+
+main()
+calling half()
+10 <arg1> 12 241 10 <ret_addr> 12 240  8 60 9 60
+calling nextTerm()
+10 <arg1> 12 246 10 <ret_addr> 12 245  8 120 9 120
+calling isEven()
+10 <arg1> 12 251 10 <ret_addr> 12 250  8 180 9 180
+from video
+10 6 11 12 13 <arg1>(200) 12 <ret_addr>(201) 10 0 9 100
+
+
+main()
+00   Swap r0
+01      with 255
+02   dec(r0)
+03   <main_loop_start> inc(r0)
+04   Store r0
+05      into 241 <half_arg1>
+06   Store r0
+07      into 246 <nextTerm_arg1>
+
+08   Store r0        // calling isEven()
+09      into 251 <isEven_arg1> 
+10   Load into r0
+11      value 16 <return_isEven>
+12   Store r0
+13      into 250 <isEven_ret_addr>
+14   if r0 != 0
+15      Jump to 180
+
+16   <return_isEven> if r0 == 0
+17      Jump to 24 <odd> // else even
+18   Load into r0     // calling half()
+19     value 30 <half_return>
+20   Store r0
+21      into 240 <half_ret_addr>
+22   if r0 != 0
+23      Jump to 60
+
+24   <odd> Load into r0 // calling nextTerm()
+25      value 30 <half_return>
+26   Store r0
+27      into 245 <nextTerm_ret_addr>
+28   if r0 != 0
+29      Jumtp to 120
+30   <half_return> print
+31   Swap r0
+
+32      with 255
+33   Load into r0
+34      value 32
+35   print as ASCII (17)
+36   Swap r0
+37      with 255
+38   dec(r0)
+39   if r0 != 0
+
+40      Jump to 3 <main_loop_start>
+
+machine code:
+14 255 2 1 12 241 12 246
+12 251 10 16 12 250 8 180
+9 24 10 30 12 240 8 60
+10 30 12 245 8 120 7 14
+255 10 32 17 14 255 2 8
+3 0 0 0 0 0 0 0
+
+half()
+
+60   Swap r0
+61      with 240 <ret_addr>
+62   Store r0
+63      into <ret1>
+64   Store r0
+65      into <ret2>
+66   Load into r0
+67      value 0
+68   <start> Swap r0
+69      with 241 <arg1>
+70   if r0 == 0
+71      Jump to <return>
+72   dec(r0)
+73   dec(r0)
+74   Swap r0
+75      with 241 <arg1>
+76   inc(r0)
+77   if r0 != 0
+78      Jump to <start>
+79   <return> Swap r0
+80      with 241 <arg1>
+81   if r0 == 0
+82      <ret1> jump to <ret_addr>
+83   if r0 != 0
+84      <ret2> jump to <ret_addr>
+
+Machine Code (60/240):
+0 0 0 0 14 240 12 82
+12 84 10 0 14 241 9 79
+2 2 14 241 1 8 68 14 
+241 8 0 9 0 0 0 0
+
+
+nextTerm()
+
+120   swap r0
+121      with 245 <ret_addr>
+122   Store r0
+123      into 148 <ret1>
+124   Store r0
+125      into 150 <ret2>
+126   swap r1
+127      with 247 <old_r1>
+
+128   Load into r1
+129      value 0
+130   Load into r0
+131      value 3
+132   Swap r1
+133      with 246 <arg1>
+134   <mult_loop> swap r0
+135      with 246 <arg1>
+
+136   add()
+137   swap r0
+138      with 246 <arg1>
+139   dec(r0)
+140   if r0 != 0
+141      Jump to 134 <mult_loop>
+142   swap r1
+143      with 247 <old_r1>
+
+144   swap r0
+145      with 246 <arg1>
+146   inc(r0)
+147   <return> if r0 != 0
+148   <ret1> Jump to <ret_addr>
+149   if r0 == 0
+150   <ret2> Jump to <ret_addr>
+
+machine code (120/245):
+14 245 12 148 12 150 15 247
+11 0 10 3 15 246 14 246
+5 14 246 2 8 134 15 247
+14 246 1 8 0 9 0 0  
+
+
+
+isEven()
+
+180   Swap r0
+181      with 250 <ret_addr>
+182   Store r0
+183      into 192 <ret1>
+
+184   Store r0
+185      into 198 <ret2>
+186   Swap r0
+187      with 251 <arg1>
+188   <start> if r0 == 0
+189      Jump to 196 <even>
+190   dec(r0)
+191   if r0 == 0
+
+192      <ret1> Jump to <ret_addr> // odd return 0
+193   dec(r0)
+194   if r0 != 0
+195      Jump to 188 <start>
+196   <even> inc(r0)
+197   if r0 != 0
+198      <ret2> Jump to <ret_addr> // even return 1
+
+machine code (180/250):
+0 0 0 0 14 250 12 192
+12 198 14 251 9 196 2 9
+0 2 8 188 1 8 0 0
+ 
+
+Full Machine Code:
+14 255 2 1 12 241 12 246
+12 251 10 16 12 250 8 180
+9 24 10 30 12 240 8 60
+10 30 12 245 8 120 7 14
+255 10 32 17 14 255 2 8
+3 0 0 0 0 0 0 0
+0 0 0 0 0 0 0 0
+0 0 0 0 14 240 12 82
+12 84 10 0 14 241 9 79
+2 2 14 241 1 8 68 14
+241 8 0 9 0 0 0 0
+0 0 0 0 0 0 0 0
+0 0 0 0 0 0 0 0
+0 0 0 0 0 0 0 0
+0 0 0 0 0 0 0 0
+14 245 12 148 12 150 15 247
+11 0 10 3 15 246 14 246
+5 14 246 2 8 134 15 247
+14 246 1 8 0 9 0 0
+0 0 0 0 0 0 0 0
+0 0 0 0 0 0 0 0
+0 0 0 0 0 0 0 0
+0 0 0 0 14 250 12 192
+12 198 14 251 9 196 2 9
+0 2 8 188 1 8 0 0
+0 0 0 0 0 0 0 0
+0 0 0 0 0 0 0 0
+0 0 0 0 0 0 0 0
+0 0 0 0 0 0 0 0
+0 0 0 0 0 0 0 0
+0 0 0 0 0 0 0 0
+0 0 0 0 0 0 0 3

@@ -1,0 +1,113 @@
+Student Notes - Lecture 26: Arrays
+
+https://www.openlearning.com/courses/unsw/computing1/Cohorts/Dec32012/lectureNotes/26
+
+Change the 't' in the string 'tree' to captial 'T':
+
+why single quotes? 
+- In C single quotes is a character
+- a character is an 8 bit number which stores an ascii value of a letter
+- double quotes means it's a string
+- a string sets aside an area of memory and sets a pointer to first character
+- strings get put into a part of memory that is locked down, they get saved as "constants" and are thus imutable. 
+
+{{{
+char *message = "tree";
+if (message[0] == 't') {
+   message[0] = 'T';
+}
+// doesn't run 
+}}}
+
+Text from annoying part of the video:
+
+This lecture is about Arrays
+
+Array are collections of variables all stored next to each other.
+
+E.g. you can have an array of ints, or an array of chars.
+
+But you can't have an array of ints AND chars mixed together. All the elements of an array have to be the same type. 
+
+You access the individual elements of an array using square brackets just like we did for strings
+
+(strings are array of characters) 
+
+eg if ages is an array of ints then
+
+ages[4] is how you refer to the 5th int the array
+
+Arrays have on interesting difference from other sorts of variables in C;
+
+For all the variables you have seen so far when you write their name in a program it refers to thie CONTENTS. 
+
+however
+
+When you write the name of array it referes to the ADDRESS of the start of the array. 
+
+== Arrays ==
+
+And array looks like this:
+
+{{{
+#!code
+#define NUM_MONTHS 4
+
+char message[42]:
+
+printf("the address of message is %p\n", message);
+// stored at the bottom with the mutable elements 
+
+message[0] = 'T';
+message[1] = 'r';
+message[2] = 'e';
+message[3] = 'e';
+message[4] = 0;
+
+int days[NUM_MONTHS];
+days[0] = 31;
+days[1] = 29;
+days[2] = 30;
+days[3] = 30;
+
+sum = sumTheElements(days);
+
+int pos = 0;
+int sum = 0;
+while (pos < NUM_MONTHS) {
+   sum = sum + days[pos];
+   pos++;
+}
+
+printf("sum of days is is %d\n", sum);
+
+}}}
+
+<<notice>>
+annoying
+Recall: When you write the name of an array it refers to the ADDRESS of the start of the array. 
+<</notice>>
+
+strings are read-only, but arrays are read/write. 
+
+Strings in C are simply a group of characters with a null (0x0) at the end so you can use {{{%s}}} to print the array as a string. But if there's no 0x0 at the end then it will print until it reached one. 
+
+Q: Does C have dynamic arrays? 
+A: For the purpose of this course - no
+
+Q: What happens if you want to store the numerical 0 in an array? 
+A: Arrays and strings are different. All strings are arrays, but not all arrays are strings. Only strings cannot contain the number 0x0. 
+
+array of ints days[2] returns 30. The compilers does the work of multiplying. 
+
+{{{
+100 | 0 | 0 | 0 | 31 |
+104 | 0 | 0 | 0 | 29 |
+108 | 0 | 0 | 0 | 30 |
+}}}
+
+In C passing an array into a function is really copying a pointer to the first element of the array. So the function can change the original array, which is a side effect. The reason it does this is because arrays can be very large and C was designed to be efficient with small amounts of memory. Copying the entire array would be slower and take more memory so C only stores the pointer to the array.
+
+If you're not careful you can go past the end of the array and overwrite the end of the array. This writes to the space next to the array trashing the program. Overwriting the end of the array is called a "buffer overflow".
+
+On the final exam you will lose 5 points if you have a buffer overflow. Richard will write questions to try to get you overflow the buffer. The camera guys fell for it. 

@@ -1,0 +1,75 @@
+/*
+ * Billy Chia Dec 31, 2012
+ *  rot13.c
+ * A program to decode the ROT-13 assignment on openlearning
+ * 1. Take is a character
+ * 2. Shift 13 number of characters over
+ * 3. Output the shifted character
+ *
+ */
+ 
+#include <stdio.h>
+#include <stdlib.h>
+#include <assert.h>
+ 
+#define FIRST_LC_LETTER 'a'
+#define LAST_LC_LETTER  'z'
+#define FIRST_UC_LETTER 'A'
+#define LAST_UC_LETTER  'Z'
+ 
+void testEncode (void);
+int isLetter (char letter);
+char encode (char plainText);
+ 
+int main (int argc, char *argv[]) {
+ 
+   //testEncode ();
+ 
+   char plainChar;
+   char encodedChar;
+ 
+   printf ("Enter the letter to be encoded: ");
+   scanf ("%c", &plainChar);
+ 
+   if (isLetter (plainChar)) {
+      encodedChar = encode (plainChar);
+   } else {
+      encodedChar = plainChar;
+   }
+   printf ("Encoded is: %c\n", encodedChar);
+ 
+   return EXIT_SUCCESS;
+}
+ 
+int isLetter (char letter) {
+   return ((letter >= FIRST_LC_LETTER) && (letter <= LAST_LC_LETTER)) ||
+          ((letter >= FIRST_UC_LETTER) && (letter <= LAST_UC_LETTER));
+}
+ 
+void testEncode (void) {
+   assert (encode ('a') == 'n');
+   assert (encode ('z') == 'm');
+   assert (encode ('A') == 'N');
+   assert (encode ('Z') == 'M');
+   assert (encode ('7') == '7');
+ 
+   printf ("All tests passed. You are Awsome!\n");
+}
+ 
+ 
+char encode (char plainText) {
+   char cipherText;
+   int toBeEncoded = isLetter(plainText);
+ 
+   if (toBeEncoded) {
+      cipherText = plainText+13;
+      if (cipherText > LAST_LC_LETTER-13) {
+         cipherText = FIRST_LC_LETTER+13;
+      }
+ 
+   } else {
+      cipherText = plainText;
+   }
+ 
+   return cipherText;
+}

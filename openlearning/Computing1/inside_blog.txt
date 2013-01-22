@@ -1,0 +1,33 @@
+Holy frijoles! This code was horribad. I think this must be what coding is like in the real-world. You inherit someone else's mess and have to update it and you don't even understand what it does. Thinking about this made me kinda depressed. Then I went to work. 
+
+I tried to format everything according to the style guide, but actually found parts of the style guid ambiguous and found myself wishing for a stricter style guide. I realize some people get all touchy about style guides and just want to do things their own way. I don't know maybe it's because I'm a novice coder I don't care about my own style - I'd rather just be told explicitly what conventions are expected and just do it that way. 
+
+In anycase I started to create line breaks, indents and spacing. Then I renamed that rediculous long variable name. I wasn't sure if that was even a legitimate way to test code so I took it out and replaced it with an assertion. (AFAIK a function should only have one return. I'm not sure this though.) 
+
+Man, there was so much broken craziness in this code I can't even list it all. 
+
+I found it a wonderful challange. I mean, I hated it, but was strangely addicted to cleaning up this crappy code. Almost like when you can't stop staring at an auto-accident. 
+
+Just understanding what was happening was pretty difficult. I don't know how to even write a Unit Test to test the code, which apparently I was supposed to do prior to modifying the code, but even the interface to the code is confusing. I'm not sure how to break this up into cleaner code without using an array. I could break each input into a separate function, but that seems like that would degrade clarity. 
+
+I'm really not sure how to do this without an array.
+
+For now I'm leaving the kludgy logic that gathers the input and just testing the tritest() function with assertions, as that seems to be the meat of the code.
+
+...
+
+Ok, I've got some assertions. The edge cases I thought of were - test points outside on all sides, negative numbers, and floats. It seems that if a point is "on" the line then it is not "inside" the line and that assertion should be FALSE. All assertions pass - time to clarify the code some more. 
+
+...
+
+wow, after messing with this a lot more, and googling a lot of the math it's starting to make sense. I'm basically renaming everything because the names are horrible and confusing. And I'm tyring to break each part of the code out into it's own functions. It's coming along and starting to look like an understandable program now. 
+
+...
+
+I can't believe it but now I'm really enjoying working with this code. It looks so nice and I can find my way around it. 
+
+The only thing left to deal with this wonky inputCheck when prompting the user for input. I don't know if this is a hacky/poor form thing or a C convention. I'm not sure how to get the same behavior without storing the return from scanf() into inputCheck so I'm going to use a variable "exitStatus" instead of the return. Then I'll check that exitStatus == EXIT_SUCCESS before printing the answer. 
+
+In the end the getInput() function is bigger than I want it to be, but I'm ok with it. I could create 8 separate functions each to gather 1 int, but that just seems more kludgy. 
+
+I think I'm good! 

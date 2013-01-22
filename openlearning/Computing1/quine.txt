@@ -1,0 +1,84 @@
+concepts that might help solve this problem:
+
+find a place where the instruction intersects with the address (for example putting instruction 9 at address 9 or some variant)
+
+Can this be done with r0 only or do you need r1? 
+
+8 and 9 seem to be key and they are the flow control 
+
+swapping seems like it could be a powerful way to affect the program - but those values are high - 14 & 15. Do I need to create a progam that loops, modifies itself on the second run and then terminates? 
+
+12 & 13 store r0/r1 into a cell, as powerful as swapping in the ability to mutate the program, but able to do so earlier. 
+
+a mutating program is an interesting concept
+
+If it mutates - what should it print out - the original or the final code? 
+
+If I use r1, then 4 and 5 seem like they could provide something interesting. 
+
+In some way you have to get the program to 7 then 0 
+
+Maybe it's simpler than I think and there's a non-mutating way to simply loop and print. 
+
+hmm... while playing I stubled accross perhaps a busy beaver answer - 1 3 5 7 8
+prints out
+
+2 5 9 1 4 4 1 1 3 1 2 6 1 1 3 1 0 8 7 7 8 1 0 1 3 1 6 1 2 3 1 1 4 1 4 9 5 2 0
+
+3 5 7 8 prints:
+
+1 5 
+1 3 
+1 0 
+6 
+1 
+1 1 
+4 
+1 2 
+3 
+9 
+1 4 
+2 
+5 
+7 
+8 
+8 
+7 
+5 
+2 
+1 4 
+9 
+3 
+1 2 
+4 
+1 1 
+1 
+6 
+1 0 
+1 3 
+1 5 
+0
+
+addinga  few more 7's gives you:
+
+2 2 2 2 2 2 2 2 2 2 5 5 5 5 5 5 5 5 5 5 9 9 9 9 9 9 9 9 9 9 1 4 1 4 1 4 1 4 1 4 1 4 1 4 1 4 1 4 1 4 4 4 4 4 4 4 4 4 4 4 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 3 3 3 3 3 3 3 3 3 3 1 2 1 2 1 2 1 2 1 2 1 2 1 2 1 2 1 2 1 2 6 6 6 6 6 6 6 6 6 6 1 1 1 1 1 1 1 1 1 1 1 3 1 3 1 3 1 3 1 3 1 3 1 3 1 3 1 3 1 3 1 0 1 0 1 0 1 0 1 0 1 0 1 0 1 0 1 0 1 0 8 8 8 8 8 8 8 8 8 8 7 7 7 7 7 7 7 7 7 7 7 7 7 7 7 7 7 7 7 7 8 8 8 8 8 8 8 8 8 8 1 0 1 0 1 0 1 0 1 0 1 0 1 0 1 0 1 0 1 0 1 3 1 3 1 3 1 3 1 3 1 3 1 3 1 3 1 3 1 3 1 1 1 1 1 1 1 1 1 1 6 6 6 6 6 6 6 6 6 6 1 2 1 2 1 2 1 2 1 2 1 2 1 2 1 2 1 2 1 2 3 3 3 3 3 3 3 3 3 3 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 1 4 4 4 4 4 4 4 4 4 4 1 4 1 4 1 4 1 4 1 4 1 4 1 4 1 4 1 4 1 4 9 9 9 9 9 9 9 9 9 9 5 5 5 5 5 5 5 5 5 5 2 2 2 2 2 2 2 2 2 2 0 0 0 0 0 0 0 0 0 0
+
+
+busy beaver - if it's zero, add 2? maybe - how do you get it to terminate? 
+
+This got me 352:
+
+4 5 7 8
+0 14 15 2
+9 13 14 15
+9 0 0 0
+
+4 5 7 7 7 8 0 14 15 2 9 14 15 9 0 0
+
+3 5 7 8 0 14 15 1 3 9 15 14 15 9 0 0
+688 characters
+
+
+
+
+
